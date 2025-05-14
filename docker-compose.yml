@@ -1,0 +1,25 @@
+services:
+
+  rabbitmq:
+      image: rabbitmq:4.0-management
+      container_name: rabbitmq_clinica
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+
+  db:
+    image: nouchka/sqlite3
+    container_name: sqlite_db_clinica
+    volumes:
+      - ./db:/data
+
+  clinica:
+    build:
+      context: ./clinica
+    container_name: clinica
+    command: ["python", "clinica.py"]
+    depends_on:
+      - rabbitmq
+      - db
+    volumes:
+      - ./db:/app/db
