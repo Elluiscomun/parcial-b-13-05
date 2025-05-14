@@ -27,14 +27,17 @@ with sqlite3.connect(DB_PATH) as conn:
 app = FastAPI()
 
 while True:
-        try:
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
-            channel = connection.channel()
-            channel.queue_declare(queue=QUEUE_NAME)
-            break
-        except pika.exceptions.AMQPConnectionError:
-            print("RabbitMQ is not ready. Retrying in 5 seconds...")
-            time.sleep(5)
+    try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+        channel = connection.channel()
+        channel.queue_declare(queue=QUEUE_NAME)
+        break
+    except pika.exceptions.AMQPConnectionError:
+        print("RabbitMQ is not ready. Retrying in 5 seconds...")
+        time.sleep(5)
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        time.sleep(5)
 
 
 
